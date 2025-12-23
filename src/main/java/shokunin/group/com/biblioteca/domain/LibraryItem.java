@@ -1,5 +1,7 @@
 package shokunin.group.com.biblioteca.domain;
 
+import java.util.Map;
+
 public abstract class LibraryItem {
     protected Integer id;
     protected final String titulo;
@@ -12,6 +14,7 @@ public abstract class LibraryItem {
 
     }
     public abstract String getTipo();
+    public abstract Map<String, String> getDetalhes();
 
     public Integer getId() {
         return id;

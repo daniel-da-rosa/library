@@ -2,6 +2,8 @@ package shokunin.group.com.biblioteca.domain;
 
 import java.time.LocalDate;
 import java.time.chrono.IsoEra;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class Periodico extends LibraryItem{
     private final String editora;
@@ -71,5 +73,22 @@ public class Periodico extends LibraryItem{
             return this;
         }
 
+    }
+    @Override
+    public String toString(){
+        return "Titulo:"+getTitulo()+"\nTipo:"+getTipo()+"\nDisponivel:"+(isDisponivel() ? "Sim" : "Nao")+"\nPeriodico [editora=" + editora + ", dataPublicacao=" + dataPublicacao + ", issn=" + issn + ", numero=" + numero + "]";
+    }
+
+    @Override
+    public Map<String,String> getDetalhes(){
+        Map<String,String> detalhes = new LinkedHashMap<>();
+        detalhes.put("Titulo",getTitulo());
+        detalhes.put("Tipo",getTipo());
+        detalhes.put("Editora",getEditora());
+        detalhes.put("Data de Publicacao",getDataPublicacao().toString());
+        detalhes.put("ISSN",getIssn());
+        detalhes.put("Numero",getNumero().toString());
+        detalhes.put("Disponivel",isDisponivel() ? "Sim" : "Nao");
+        return detalhes;
     }
 }

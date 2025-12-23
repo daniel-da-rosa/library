@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -42,25 +43,8 @@ public class Main {
 
             items.forEach(item -> {
                 System.out.println("------------------------------------------------");
-                System.out.println("Tipo: " +
-                    item.getTipo()+
-                    " \nTitulo: "+item.getTitulo()+
-                    " \nDisponivel: "+
-                    (item.isDisponivel()?"Sim":"Nao")
-            );
-                if(item instanceof Book){
-                    Book livro = (Book) item;
-                    System.out.println("Autor: " + livro.getAutor());
-                    System.out.println("Genero: " + livro.getGenero());
-                    System.out.println("ISBN: " + livro.getIsbn());
-
-                } else if (item instanceof Periodico) {
-                    System.out.println("Editora: " + ((Periodico) item).getEditora());
-                    System.out.println("Data de publicacao: " + ((Periodico) item).getDataPublicacao());
-                    System.out.println("ISSN: " + ((Periodico) item).getIssn());
-                    System.out.println("Numero: " + ((Periodico) item).getNumero());
-
-                }
+                Map<String,String> detalhes = item.getDetalhes();
+                detalhes.forEach((chave,valor) -> System.out.println(chave + ": " + valor));
 
             });
 

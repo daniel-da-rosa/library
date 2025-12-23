@@ -1,5 +1,8 @@
 package shokunin.group.com.biblioteca.domain;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public class Book extends LibraryItem{
     private final String autor;
     private final Integer anoPublicacao;
@@ -73,6 +76,23 @@ public class Book extends LibraryItem{
             return new Book(this);
         }
 
+    }
+
+    @Override
+    public String toString(){
+        return "Titulo:"+getTitulo()+"\nTipo:"+getTipo()+"\nDisponivel:"+(isDisponivel() ? "Sim" : "Nao")+"\nLivro [autor=" + autor + ", anoPublicacao=" + anoPublicacao + ", genero=" + genero + ", isbn=" + isbn + "]";
+    }
+
+    @Override
+    public Map<String,String>getDetalhes(){
+        Map<String, String> detalhes = new LinkedHashMap<>();
+        detalhes.put("Titulo", getTitulo());
+        detalhes.put("Autor", autor);
+        detalhes.put("Ano de Publicacao", anoPublicacao.toString());
+        detalhes.put("Genero", genero);
+        detalhes.put("ISBN", isbn);
+        detalhes.put("Disponivel", isDisponivel() ? "Sim" : "Nao");
+        return detalhes;
     }
 
 }
