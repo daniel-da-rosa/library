@@ -15,4 +15,9 @@ public class Unidade {
         this.email = email;
 
     }
+    public String getId(){return id;}
+    public String getNome(){return nome;}
+    public String getEndereco(){return endereco;}
+    public String getTelefone(){return telefone;}
+    public String getEmail(){return email;}
 }

@@ -31,6 +31,6 @@ public class FuncionarioEmprestimoStrategy implements EmprestimoStrategy {
 
     @Override
     public String getTipoUsuario() {
-        return "ALUNO";
+        return "FUNCIONARIO";
     }
 }

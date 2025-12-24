@@ -16,10 +16,8 @@ public class Funcionario extends Usuario{
     public String getRegistro(){return registro;}
     public String getCargo(){return cargo;}
 
-
-
     @Override
-    public String getTipo(){return "Funcionario";}
+    public String getTipo(){return "FUNCIONARIO";}
 
     @Override
     public String toString(){
