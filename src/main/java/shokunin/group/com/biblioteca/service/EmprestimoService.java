@@ -1,9 +1,11 @@
 package shokunin.group.com.biblioteca.service;
 
 import shokunin.group.com.biblioteca.domain.Emprestimo;
+import shokunin.group.com.biblioteca.repository.EmprestimoRepository;
 import shokunin.group.com.biblioteca.strategy.contracts.EmprestimoStrategy;
 import shokunin.group.com.biblioteca.domain.LibraryItem;
 import shokunin.group.com.biblioteca.domain.Usuario;
+import shokunin.group.com.biblioteca.exceptions.LibraryExceptionFactory;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -12,33 +14,43 @@ import java.util.Map;
 
 public class EmprestimoService {
     private final Map<String,EmprestimoStrategy> estrategias = new HashMap<>();
+    private final EmprestimoRepository emprestimoRepository;
 
-    public EmprestimoService(List<EmprestimoStrategy> listaEstrategias) {
+    public EmprestimoService(List<EmprestimoStrategy> listaEstrategias,EmprestimoRepository emprestimoRepository) {
+        this.emprestimoRepository = emprestimoRepository;
         for (EmprestimoStrategy estrategia : listaEstrategias) {
             estrategias.put(estrategia.getTipoUsuario(), estrategia);
         }
 
     }
 
-    public void processarEmprestimo(Usuario usuario, LibraryItem item){
+    public Emprestimo processarEmprestimo(Usuario usuario, LibraryItem item){
+
         EmprestimoStrategy regra = estrategias.get(usuario.getTipo());
         if (regra == null) {
-            throw new IllegalArgumentException("Nenhuma regra de emprestimo econtrada para esse tipo de usuario");
+            throw LibraryExceptionFactory.regraNaoEncontrada(usuario.getTipo());
         }
-
-        int dias = regra.getDiasEmprestimo();
-        int maximoItens = regra.getMaximoItens();
 
         if (!item.isDisponivel()){
-            throw new IllegalArgumentException("Item nao esta disponivel para emprestimo");
+            throw LibraryExceptionFactory.itemIndisponivel(item.getTitulo());
         }
-        //TODO: Verificar se o usuario ja possui o maximo de itens emprestados
 
-        System.out.println("Emprestimo de " + item.getTitulo() + " para " + usuario.getNome() + " por " + dias + " dias");
-        System.out.println("Maximo de itens: " + maximoItens);
-        //TODO : Criar objeto emprestimo e persisitir no banco de dados
+        Emprestimo novoEmprestimo = new Emprestimo.EmprestimoBuilder(usuario,item)
+                .comPrazo(regra.getDiasEmprestimo())
+                .build();
+
+        item.setDisponivel(false);
+
+        novoEmprestimo.getDetalhes().forEach((chave,valor) -> System.out.println(chave + ": " + valor));
+
+
+        //TODO: Verificar se o usuario ja possui o maximo de itens emprestados
+        emprestimoRepository.salvarEmprestimo(novoEmprestimo);
+
+        return novoEmprestimo;
 
     }
+
 
     public double processarDevolucao(Emprestimo emprestimo, LocalDate dataRetorno){
 

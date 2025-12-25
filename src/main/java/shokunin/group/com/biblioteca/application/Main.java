@@ -2,6 +2,9 @@ package shokunin.group.com.biblioteca.application;
 
 import shokunin.group.com.biblioteca.domain.*;
 import shokunin.group.com.biblioteca.domain.enums.NivelEnsino;
+import shokunin.group.com.biblioteca.exceptions.ItemIndisponivelException;
+import shokunin.group.com.biblioteca.exceptions.LibraryException;
+import shokunin.group.com.biblioteca.repository.EmprestimoRepository;
 import shokunin.group.com.biblioteca.service.EmprestimoService;
 import java.time.format.DateTimeFormatter;
 import shokunin.group.com.biblioteca.strategy.ALunoEmprestimoStrategy;
@@ -56,13 +59,18 @@ public class Main {
 //            e.printStackTrace();
 //
 //        }
-
-        Unidade unidade = new Unidade("001","Senai Tubarão","Marcolino Martins Cabral,123 Centro - Tubarão - SC","47999999999","senai@senai.com");
-
         EmprestimoService service = new EmprestimoService(List.of(
                 new ALunoEmprestimoStrategy(),
                 new FuncionarioEmprestimoStrategy()
-        ));
+        ), new EmprestimoRepository());
+
+        Unidade unidade = new Unidade.UnidadeBuilder()
+                .comId("001")
+                .comNome("Senai Tubarão")
+                .comEndereco("Marcolino Martins Cabral,123 Centro - Tubarão - SC")
+                .comTelefone("47999999999")
+                .comEmail("senai@senai.com")
+                .build();
 
         Usuario aluno = new Aluno.AlunoBuilder("Julia Mota", "123456789",unidade)
                 .comAtivo(true)
@@ -86,25 +94,30 @@ public class Main {
                 .comNumero(187)
                 .build();
 
-        Emprestimo emprestimo = new Emprestimo.EmprestimoBuilder(aluno,book)
-                .comPrazo(7)
-                .build();
-
-        System.out.println("Emprestimo registrado com sucesso!! Detalhes abaixo:");
-        emprestimo.getDetalhes().forEach((chave,valor) -> System.out.println(chave + ": " + valor));
+        try{
+            Emprestimo emprestimo = service.processarEmprestimo(aluno,book);
 
 
+            // Simulando  Devolução com Atraso
+            System.out.println("\n--- Processando Devolução (Simulando Atraso) ---");
+            LocalDate dataRealDevolucao = LocalDate.now().plusDays(10);
 
-        // Simulando  Devolução com Atraso
-        System.out.println("\n--- Processando Devolução (Simulando Atraso) ---");
-        LocalDate dataRealDevolucao = LocalDate.now().plusDays(10);
+            double multa = service.processarDevolucao(emprestimo, dataRealDevolucao);
 
-        double multa = service.processarDevolucao(emprestimo, dataRealDevolucao);
+            //Resumo final
+            emprestimo.getDetalhes().entrySet().forEach(entry -> System.out.println(entry.getKey() + ": " + entry.getValue()));
+            System.out.println("Status final do livro: " + (book.isDisponivel() ? "Disponível" : "Emprestado"));
 
-        //Resumo final
-         emprestimo.getDetalhes().entrySet().forEach(entry -> System.out.println(entry.getKey() + ": " + entry.getValue()));
-        System.out.println("Multa aplicada: R$ " + multa);
-        System.out.println("Status final do livro: " + (book.isDisponivel() ? "Disponível" : "Emprestado"));
+
+        } catch (ItemIndisponivelException e){
+            System.err.println("Erro ao processar emprestimo: " + e.getMessage());
+            e.getCodigoErro();
+        }
+
+
+
+
+
 
     }
 }
