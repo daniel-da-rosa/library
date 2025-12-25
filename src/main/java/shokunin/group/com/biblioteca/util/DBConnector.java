@@ -6,21 +6,17 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
+/*quando tiver duvida de um nome exato de uma classe execute:
+* jar tf caminho/do/arquivo.jar | Select-String "NomeDaClasse"
+* o erro de compilação era o nome errado o sqlite
+* */
 public class DBConnector {
     private static final HikariDataSource dataSource;
 
     static {
-        try {
-            // Isso força a JVM do Linux a carregar o driver do SQLite
-            Class.forName("org.xerial.sqlite.JDBC");
-        } catch (ClassNotFoundException e) {
-            System.err.println("Driver JDBC não encontrado no Classpath do WSL!");
-            throw new RuntimeException(e);
-        }
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl("jdbc:sqlite:./biblioteca.db");
-        config.setDriverClassName("org.xerial.sqlite.JDBC");
+        config.setDriverClassName("org.sqlite.JDBC");
         //configurar setMaximumPoolSize para 10
         config.setMaximumPoolSize(10);
         dataSource = new HikariDataSource(config);
