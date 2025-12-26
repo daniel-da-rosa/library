@@ -1,10 +1,9 @@
 package shokunin.group.com.biblioteca.domain;
 
 import java.util.Map;
-import java.util.UUID;
 
 public abstract class Usuario {
-    private final UUID id;
+    private  Integer id;
     private final String nome;
     private final String email;
     private final String senha;
@@ -24,7 +23,9 @@ public abstract class Usuario {
         this.telefone = builder.telefone;
 
     }
-    public UUID getId(){return id;}
+    public Integer getId(){return id;}
+    public void setId(Integer id){ this.id = id;}
+
     public String getNome(){return nome;}
     public String getDocumento(){return documento;}
     public boolean isAtivo(){return ativo;}
@@ -36,10 +37,12 @@ public abstract class Usuario {
     //metodos abstratos
     public abstract Map<String,String> getDetalhes();
     public abstract  String getTipo();
+    public abstract  String getMatriculaRegistro();
+    public abstract  String getNivelEnsino();
 
     //Builder
     public static abstract class UsuarioBuilder<T extends UsuarioBuilder<T>>{
-        private UUID id;
+        private Integer id;
         private String nome;
         private String documento;
         private boolean ativo = true;
@@ -52,7 +55,7 @@ public abstract class Usuario {
             if(nome==null || nome.isBlank() ||documento == null || documento.isBlank()){
                 throw new IllegalArgumentException("Nome e documento são obrigatórios");
             }
-            this.id = UUID.randomUUID();//temporario trocar quando for persistir no banco.
+
             this.nome=nome;
             this.documento= documento;
             this.unidade = unidade;
@@ -63,7 +66,7 @@ public abstract class Usuario {
             return self();
         }
 
-        public T comId(UUID id){
+        public T comId(Integer id){
             this.id = id;
             return self();
         }

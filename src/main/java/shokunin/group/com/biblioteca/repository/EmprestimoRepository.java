@@ -9,16 +9,19 @@ import java.sql.SQLException;
 public class EmprestimoRepository {
 
     public void salvarEmprestimo(Emprestimo emprestimo){
-        String sql = "INSERT INTO emprestimos (USUARIO_NOME, ITEM_TITULO, DATA_EMPRESTIMO, DATA_DEVOLUCAO) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO emprestimos (USUARIO_ID, ITEMLIBRARY_ID, DATA_EMPRESTIMO, DATA_DEVOLUCAO_PREVISTA,DATA_DEVOLUCAO_REAL,MULTA,STATUS) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         //Usando o Pool de conexão - evita de ficar abrindo e fechando conexão a cada operção.
 
         try(Connection conn = DBConnector.getConnection();
             PreparedStatement pstmt = conn.prepareStatement(sql)){
-                pstmt.setString(1,emprestimo.getUsuario().getNome());
-                pstmt.setString(2,emprestimo.getItem().getTitulo());
+                pstmt.setInt(1,emprestimo.getUsuario().getId());
+                pstmt.setInt(2,emprestimo.getItem().getId());
                 pstmt.setString(3,emprestimo.getDataEmprestimo().toString());
                 pstmt.setString(4,emprestimo.getDataPrevistaDevolucao().toString());
+                pstmt.setString(5,null);
+                pstmt.setDouble(6,emprestimo.getMulta());
+                pstmt.setString(7,"ABERTO");
                 pstmt.executeUpdate();
             System.out.println("Emprestimo salvo com sucesso");
     }catch (SQLException e){

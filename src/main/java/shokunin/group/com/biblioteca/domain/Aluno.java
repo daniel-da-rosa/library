@@ -16,7 +16,8 @@ public class Aluno extends Usuario{
     }
 
     public String getMatricula(){return matricula;}
-    public NivelEnsino getNivelEnsino(){return nivelEnsino;}
+    @Override
+    public String getNivelEnsino(){return nivelEnsino.toString();}
 
     @Override
     public Map<String,String> getDetalhes(){
@@ -28,6 +29,10 @@ public class Aluno extends Usuario{
     @Override
     public String getTipo(){
         return "ALUNO";
+    }
+    @Override
+    public String getMatriculaRegistro(){
+        return this.matricula;
     }
     @Override
     public String toString(){

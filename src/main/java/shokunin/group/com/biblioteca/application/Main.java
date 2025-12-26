@@ -65,7 +65,7 @@ public class Main {
         ), new EmprestimoRepository());
 
         Unidade unidade = new Unidade.UnidadeBuilder()
-                .comId("001")
+                .comId(1)
                 .comNome("Senai Tubarão")
                 .comEndereco("Marcolino Martins Cabral,123 Centro - Tubarão - SC")
                 .comTelefone("47999999999")

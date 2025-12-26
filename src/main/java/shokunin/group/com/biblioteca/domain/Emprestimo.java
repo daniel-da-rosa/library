@@ -3,10 +3,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class Emprestimo {
-    private final UUID id;
+    private  Integer id;
     private final LocalDate dataEmprestimo;
     private final LocalDate dataPrevistaDevolucao;
     private final Usuario usuario;
@@ -22,9 +21,13 @@ public class Emprestimo {
         this.item = builder.item;
 
     }
-    public UUID getId(){
+    public Integer getId(){
         return id;
     }
+    public void setId(Integer id ){
+        this.id =id;
+    }
+
     public LocalDate getDataEmprestimo(){
         return dataEmprestimo;
     }
@@ -65,7 +68,7 @@ public class Emprestimo {
     }
 
     public static class EmprestimoBuilder{
-        private UUID id = UUID.randomUUID();
+        private Integer id ;
         private LocalDate dataEmprestimo = LocalDate.now();
         private LocalDate dataPrevistaDevolucao;
         private Usuario usuario;

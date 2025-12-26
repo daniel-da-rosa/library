@@ -5,11 +5,13 @@ import java.util.Map;
 import java.util.UUID;
 
 public class Unidade {
-    private final String id;
+    private Integer id;
     private final String nome;
     private final String endereco;
     private final String telefone;
     private final String email;
+
+
 
     private Unidade(UnidadeBuilder builder){
         this.id = builder.id;
@@ -20,7 +22,10 @@ public class Unidade {
 
     }
 
-    public String getId(){return id;}
+    public Integer getId(){return id;}
+    public void setId(Integer id){
+        this.id = id;
+    }
     public String getNome(){return nome;}
     public String getEndereco(){return endereco;}
     public String getTelefone(){return telefone;}
@@ -28,7 +33,7 @@ public class Unidade {
 
     public Map<String,String>getDetalhes(){
         Map<String,String>detalhes = new LinkedHashMap<>();
-        detalhes.put("ID",getId());
+        detalhes.put("ID",getId().toString());
         detalhes.put("Nome",getNome());
         detalhes.put("Endereco",getEndereco());
         detalhes.put("Telefone",getTelefone());
@@ -37,7 +42,7 @@ public class Unidade {
     }
 
     public static class UnidadeBuilder {
-        private String id;
+        private Integer id;
         private String nome;
         private String endereco;
         private String telefone;
@@ -47,7 +52,7 @@ public class Unidade {
         public UnidadeBuilder() {
         }
 
-        public UnidadeBuilder comId(String id) {
+        public UnidadeBuilder comId(Integer id) {
             this.id = id;
             return this;
         }

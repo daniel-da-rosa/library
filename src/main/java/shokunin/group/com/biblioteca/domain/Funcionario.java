@@ -13,7 +13,7 @@ public class Funcionario extends Usuario{
         this.cargo = builder.cargo;
     }
 
-    public String getRegistro(){return registro;}
+
     public String getCargo(){return cargo;}
 
     @Override
@@ -23,10 +23,19 @@ public class Funcionario extends Usuario{
     public String toString(){
         return "Funcionario [registro=" + registro + ", cargo=" + cargo + "]";
     }
+
+    @Override
+    public String getMatriculaRegistro(){return registro;}
+
+    @Override
+    public String getNivelEnsino(){
+        return "NSA";
+    }
+
     @Override
     public Map<String,String> getDetalhes(){
         Map<String,String> detalhes = new LinkedHashMap<>();
-        detalhes.put("Registro",getRegistro());
+        detalhes.put("Registro",getMatriculaRegistro());
         detalhes.put("Cargo",getCargo());
         return detalhes;
     }
@@ -36,13 +45,16 @@ public class Funcionario extends Usuario{
         private String registro;
         private String cargo;
 
-        public FuncionarioBuilder(String nome, String documento, Unidade unidade,String registro,String cargo){
+        public FuncionarioBuilder(String nome, String documento, Unidade unidade){
             super(nome,documento,unidade);
             if(registro == null || registro.isBlank() || cargo == null || cargo.isBlank()){
                 throw new IllegalArgumentException("Registro e cargo são obrigatórios");
             }
+
+        }
+        public FuncionarioBuilder comRegistro(String registro){
             this.registro = registro;
-            this.cargo = cargo;
+            return self();
         }
 
         public FuncionarioBuilder comCargo(String cargo){
