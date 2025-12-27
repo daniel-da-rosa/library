@@ -1,11 +1,12 @@
 package shokunin.group.com.biblioteca.domain;
 
+import shokunin.group.com.biblioteca.domain.contracts.AlunoInterface;
 import shokunin.group.com.biblioteca.domain.enums.NivelEnsino;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Aluno extends Usuario{
+public final class Aluno extends Usuario implements AlunoInterface {
     private final String matricula;
     private final NivelEnsino nivelEnsino;
 
@@ -14,8 +15,9 @@ public class Aluno extends Usuario{
         this.matricula = builder.matricula;
         this.nivelEnsino = builder.nivelEnsino;
     }
-
+    @Override
     public String getMatricula(){return matricula;}
+
     @Override
     public String getNivelEnsino(){return nivelEnsino.toString();}
 
@@ -26,14 +28,7 @@ public class Aluno extends Usuario{
         detalhes.put("Nivel Ensino",getNivelEnsino().toString());
         return detalhes;
     }
-    @Override
-    public String getTipo(){
-        return "ALUNO";
-    }
-    @Override
-    public String getMatriculaRegistro(){
-        return this.matricula;
-    }
+
     @Override
     public String toString(){
         return "Aluno [matricula=" + matricula + ", nivelEnsino=" + nivelEnsino + "]";

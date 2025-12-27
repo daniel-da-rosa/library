@@ -2,7 +2,7 @@ package shokunin.group.com.biblioteca.domain;
 
 import java.util.Map;
 
-public abstract class Usuario {
+public sealed abstract class Usuario permits Aluno,Funcionario{
     private  Integer id;
     private final String nome;
     private final String email;
@@ -36,9 +36,8 @@ public abstract class Usuario {
 
     //metodos abstratos
     public abstract Map<String,String> getDetalhes();
-    public abstract  String getTipo();
-    public abstract  String getMatriculaRegistro();
-    public abstract  String getNivelEnsino();
+
+
 
     //Builder
     public static abstract class UsuarioBuilder<T extends UsuarioBuilder<T>>{

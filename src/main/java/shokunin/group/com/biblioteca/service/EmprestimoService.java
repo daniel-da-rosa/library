@@ -1,10 +1,8 @@
 package shokunin.group.com.biblioteca.service;
 
-import shokunin.group.com.biblioteca.domain.Emprestimo;
+import shokunin.group.com.biblioteca.domain.*;
 import shokunin.group.com.biblioteca.repository.EmprestimoRepository;
 import shokunin.group.com.biblioteca.strategy.contracts.EmprestimoStrategy;
-import shokunin.group.com.biblioteca.domain.LibraryItem;
-import shokunin.group.com.biblioteca.domain.Usuario;
 import shokunin.group.com.biblioteca.exceptions.LibraryExceptionFactory;
 
 import java.time.LocalDate;
@@ -26,9 +24,14 @@ public class EmprestimoService {
 
     public Emprestimo processarEmprestimo(Usuario usuario, LibraryItem item){
 
-        EmprestimoStrategy regra = estrategias.get(usuario.getTipo());
+        EmprestimoStrategy regra = switch (usuario){
+          case Aluno a -> estrategias.get("ALUNO");
+          case Funcionario f -> estrategias.get("FUNCIONARIO");
+
+        };
+
         if (regra == null) {
-            throw LibraryExceptionFactory.regraNaoEncontrada(usuario.getTipo());
+            throw LibraryExceptionFactory.regraNaoEncontrada(usuario.getClass().getSimpleName());
         }
 
         if (!item.isDisponivel()){
@@ -56,7 +59,11 @@ public class EmprestimoService {
 
         emprestimo.getItem().setDisponivel(true);// retorna o objeto ao status disponivel
         emprestimo.registraDevolucaoEfetiva(dataRetorno);
-        EmprestimoStrategy regra = estrategias.get(emprestimo.getUsuario().getTipo());
+        EmprestimoStrategy regra = switch (emprestimo.getUsuario()){
+            case Aluno a -> estrategias.get("ALUNO");
+            case Funcionario f -> estrategias.get("FUNCIONARIO");
+
+        };
 
         if (dataRetorno.isAfter(emprestimo.getDataPrevistaDevolucao())){
             long diasAtraso = java.time.temporal.ChronoUnit.DAYS.between(

@@ -21,6 +21,9 @@ public class Unidade {
         this.email = builder.email;
 
     }
+    public static UnidadeBuilder builder(){
+        return new UnidadeBuilder();
+    }
 
     public Integer getId(){return id;}
     public void setId(Integer id){
@@ -49,7 +52,7 @@ public class Unidade {
         private String email;
 
 
-        public UnidadeBuilder() {
+        public  UnidadeBuilder() {
         }
 
         public UnidadeBuilder comId(Integer id) {
@@ -77,12 +80,10 @@ public class Unidade {
             return this;
         }
 
+
         public Unidade build() {
             return new Unidade(this);
         }
 
-        public UnidadeBuilder self() {
-            return this;
-        }
     }
 }

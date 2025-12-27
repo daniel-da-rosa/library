@@ -1,11 +1,14 @@
 package shokunin.group.com.biblioteca.domain;
 
+import shokunin.group.com.biblioteca.domain.contracts.FuncionarioInterface;
+
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Funcionario extends Usuario{
-    private final String registro;
-    private final String cargo;
+public final class Funcionario extends Usuario implements FuncionarioInterface {
+    private  String registro;
+    private  String cargo;
 
     private Funcionario(FuncionarioBuilder builder){
         super(builder);
@@ -17,27 +20,19 @@ public class Funcionario extends Usuario{
     public String getCargo(){return cargo;}
 
     @Override
-    public String getTipo(){return "FUNCIONARIO";}
-
-    @Override
     public String toString(){
         return "Funcionario [registro=" + registro + ", cargo=" + cargo + "]";
     }
 
     @Override
-    public String getMatriculaRegistro(){return registro;}
-
-    @Override
-    public String getNivelEnsino(){
-        return "NSA";
-    }
+    public String getRegistro(){return registro;}
 
     @Override
     public Map<String,String> getDetalhes(){
         Map<String,String> detalhes = new LinkedHashMap<>();
-        detalhes.put("Registro",getMatriculaRegistro());
+        detalhes.put("Registro",getRegistro());
         detalhes.put("Cargo",getCargo());
-        return detalhes;
+        return Collections.unmodifiableMap(detalhes);
     }
 
 
@@ -47,11 +42,9 @@ public class Funcionario extends Usuario{
 
         public FuncionarioBuilder(String nome, String documento, Unidade unidade){
             super(nome,documento,unidade);
-            if(registro == null || registro.isBlank() || cargo == null || cargo.isBlank()){
-                throw new IllegalArgumentException("Registro e cargo são obrigatórios");
-            }
 
         }
+
         public FuncionarioBuilder comRegistro(String registro){
             this.registro = registro;
             return self();
