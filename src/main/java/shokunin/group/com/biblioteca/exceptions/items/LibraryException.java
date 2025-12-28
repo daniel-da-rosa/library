@@ -1,4 +1,4 @@
-package shokunin.group.com.biblioteca.exceptions;
+package shokunin.group.com.biblioteca.exceptions.items;
 
 public class LibraryException extends RuntimeException{
     private final String codigoErro;

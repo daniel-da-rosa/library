@@ -1,4 +1,4 @@
-package shokunin.group.com.biblioteca.exceptions;
+package shokunin.group.com.biblioteca.exceptions.repository;
 
 public class ConexaoBancoDadosException extends RepositoryException {
     public ConexaoBancoDadosException(Throwable cause) {

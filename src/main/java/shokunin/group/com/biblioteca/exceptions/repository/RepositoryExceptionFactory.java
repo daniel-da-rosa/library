@@ -1,7 +1,4 @@
-package shokunin.group.com.biblioteca.exceptions;
-
-import java.lang.reflect.GenericDeclaration;
-import java.sql.Statement;
+package shokunin.group.com.biblioteca.exceptions.repository;
 
 public class RepositoryExceptionFactory {
     /**

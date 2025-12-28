@@ -14,7 +14,7 @@ import shokunin.group.com.biblioteca.repository.UnidadeRepository;
 import shokunin.group.com.biblioteca.repository.UsuarioRepository;
 import shokunin.group.com.biblioteca.strategy.ALunoEmprestimoStrategy;
 import shokunin.group.com.biblioteca.strategy.FuncionarioEmprestimoStrategy;
-import shokunin.group.com.biblioteca.exceptions.ItemIndisponivelException;
+import shokunin.group.com.biblioteca.exceptions.items.ItemIndisponivelException;
 
 import java.time.LocalDate;
 import java.util.List;

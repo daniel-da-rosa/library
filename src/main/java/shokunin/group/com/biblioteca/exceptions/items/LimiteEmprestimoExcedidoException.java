@@ -1,4 +1,4 @@
-package shokunin.group.com.biblioteca.exceptions;
+package shokunin.group.com.biblioteca.exceptions.items;
 
 public class LimiteEmprestimoExcedidoException extends LibraryException {
     public LimiteEmprestimoExcedidoException(String usuario){

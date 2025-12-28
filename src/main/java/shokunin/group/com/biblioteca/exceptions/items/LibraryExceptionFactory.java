@@ -1,4 +1,4 @@
-package shokunin.group.com.biblioteca.exceptions;
+package shokunin.group.com.biblioteca.exceptions.items;
 
 public class LibraryExceptionFactory {
     public static LibraryException itemIndisponivel(String titulo){

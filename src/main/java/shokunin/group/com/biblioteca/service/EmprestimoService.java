@@ -7,7 +7,7 @@ import shokunin.group.com.biblioteca.domain.users.Funcionario;
 import shokunin.group.com.biblioteca.domain.users.Usuario;
 import shokunin.group.com.biblioteca.repository.EmprestimoRepository;
 import shokunin.group.com.biblioteca.strategy.contracts.EmprestimoStrategy;
-import shokunin.group.com.biblioteca.exceptions.LibraryExceptionFactory;
+import shokunin.group.com.biblioteca.exceptions.items.LibraryExceptionFactory;
 
 import java.time.LocalDate;
 import java.util.HashMap;

@@ -1,6 +1,6 @@
-package shokunin.group.com.biblioteca.exceptions;
+package shokunin.group.com.biblioteca.exceptions.repository;
 
-public class EntidadeNaoEncontradaException extends RepositoryException{
+public class EntidadeNaoEncontradaException extends RepositoryException {
 
     public EntidadeNaoEncontradaException(String entidade,Object id) {
 

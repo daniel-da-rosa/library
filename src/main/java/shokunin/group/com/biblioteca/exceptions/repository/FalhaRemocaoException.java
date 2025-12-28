@@ -1,4 +1,4 @@
-package shokunin.group.com.biblioteca.exceptions;
+package shokunin.group.com.biblioteca.exceptions.repository;
 
 public class FalhaRemocaoException extends RepositoryException {
     public FalhaRemocaoException(String entidade, Object id, Throwable cause) {

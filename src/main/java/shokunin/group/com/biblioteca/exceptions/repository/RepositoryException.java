@@ -1,4 +1,4 @@
-package shokunin.group.com.biblioteca.exceptions;
+package shokunin.group.com.biblioteca.exceptions.repository;
 
 public class RepositoryException extends RuntimeException {
     private final String codigoErro;

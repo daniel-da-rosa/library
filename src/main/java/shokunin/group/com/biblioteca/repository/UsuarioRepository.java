@@ -5,7 +5,7 @@ import shokunin.group.com.biblioteca.domain.unidades.Unidade;
 import shokunin.group.com.biblioteca.domain.users.Aluno;
 import shokunin.group.com.biblioteca.domain.users.Funcionario;
 import shokunin.group.com.biblioteca.domain.users.Usuario;
-import shokunin.group.com.biblioteca.exceptions.RepositoryExceptionFactory;
+import shokunin.group.com.biblioteca.exceptions.repository.RepositoryExceptionFactory;
 import shokunin.group.com.biblioteca.util.DBConnector;
 
 import java.sql.*;
