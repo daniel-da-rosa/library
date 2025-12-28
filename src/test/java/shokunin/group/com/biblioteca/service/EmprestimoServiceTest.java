@@ -3,7 +3,10 @@ package shokunin.group.com.biblioteca.service;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.platform.engine.TestExecutionResult;
 import shokunin.group.com.biblioteca.domain.emprestimos.Emprestimo;
+import shokunin.group.com.biblioteca.domain.itens.StatusItemLibray;
+import shokunin.group.com.biblioteca.domain.itens.enums.Status;
 import shokunin.group.com.biblioteca.domain.users.enums.NivelEnsino;
 import shokunin.group.com.biblioteca.domain.itens.Book;
 import shokunin.group.com.biblioteca.domain.unidades.Unidade;
@@ -63,9 +66,8 @@ public class EmprestimoServiceTest {
 
         usuarioRepository.salvar(aluno);
 
-        livro = new Book.BookBuilder("O Senhor dos Anéis","978-3-16-148410-0","J.R.R. Tolkien",1954)
+        livro = new Book.BookBuilder("O Senhor dos Anéis","978-3-16-148410-0","J.R.R. Tolkien",1954, StatusItemLibray.disponivel() )
                 .comGenero("Fantasia")
-                .comDisponibilidade(true)
                 .build();
         //todo criar repositorio do itemLibrary itemLibrayRepository.salvar(livro);
 
@@ -83,13 +85,13 @@ public class EmprestimoServiceTest {
         //verifica se a multa foi calculada corretamente
         assertThat(multa).isGreaterThan(0); // verifica se a multa foi calculada corretamente. É auto explicativo mas ajuda a entender o que está acontecendo.
         assertThat(emprestimo.getMulta()).isEqualTo(multa);
-        assertThat(livro.isDisponivel()).isTrue(); //verifica se o livro foi devolvido corretamente
+        assertThat(livro.getStatus().permiteEmprestimo()).isTrue(); //verifica se o livro foi devolvido corretamente
 
     }
     @Test
     @DisplayName("Deve impedir que um livro já empresatdo (disponivel = false) seja emprestado novamente")
     void deveValidarLivroIndisponivel(){
-        livro.setDisponivel(false);
+        livro.emprestar();
 
         //teste de emprestimo
         assertThatThrownBy(() -> service.processarEmprestimo(aluno,livro))

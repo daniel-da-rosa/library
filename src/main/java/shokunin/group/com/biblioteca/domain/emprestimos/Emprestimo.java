@@ -50,7 +50,7 @@ public class Emprestimo {
         return devolucaoEfetiva;
     }
 
-    private double getMulta(){
+    public double getMulta(){
         return multa;
     }
 

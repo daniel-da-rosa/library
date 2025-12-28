@@ -41,8 +41,8 @@ public class Periodico extends LibraryItem{
         private String issn;
         private Integer numero;
 
-        public PeriodicoBuilder(String titulo, String issn){
-            super(titulo);
+        public PeriodicoBuilder(String titulo, String issn, StatusItemLibray status){
+            super(titulo,status);
 
             if(issn == null || issn.isBlank()){
                 throw new IllegalArgumentException("ISSN é obrigatório");
@@ -76,7 +76,7 @@ public class Periodico extends LibraryItem{
     }
     @Override
     public String toString(){
-        return "Titulo:"+getTitulo()+"\nTipo:"+getTipo()+"\nDisponivel:"+(isDisponivel() ? "Sim" : "Nao")+"\nPeriodico [editora=" + editora + ", dataPublicacao=" + dataPublicacao + ", issn=" + issn + ", numero=" + numero + "]";
+        return "Titulo:"+getTitulo()+"\nTipo:"+getTipo()+"\nDisponivel:"+(status.permiteEmprestimo() ? "Sim" : "Nao")+"\nPeriodico [editora=" + editora + ", dataPublicacao=" + dataPublicacao + ", issn=" + issn + ", numero=" + numero + "]";
     }
 
     @Override
@@ -88,7 +88,7 @@ public class Periodico extends LibraryItem{
         detalhes.put("Data de Publicacao",getDataPublicacao().toString());
         detalhes.put("ISSN",getIssn());
         detalhes.put("Numero",getNumero().toString());
-        detalhes.put("Disponivel",isDisponivel() ? "Sim" : "Nao");
+        detalhes.put("Disponivel",status.permiteEmprestimo() ? "Sim" : "Nao");
         return Collections.unmodifiableMap(detalhes);
     }
 }
