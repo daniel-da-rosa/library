@@ -1,6 +1,6 @@
 package shokunin.group.com.biblioteca.repository;
 
-import shokunin.group.com.biblioteca.domain.Emprestimo;
+import shokunin.group.com.biblioteca.domain.emprestimos.Emprestimo;
 import shokunin.group.com.biblioteca.util.DBConnector;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

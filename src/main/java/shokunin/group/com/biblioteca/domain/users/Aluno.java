@@ -1,8 +1,10 @@
-package shokunin.group.com.biblioteca.domain;
+package shokunin.group.com.biblioteca.domain.users;
 
-import shokunin.group.com.biblioteca.domain.contracts.AlunoInterface;
-import shokunin.group.com.biblioteca.domain.enums.NivelEnsino;
+import shokunin.group.com.biblioteca.domain.unidades.Unidade;
+import shokunin.group.com.biblioteca.domain.users.contracts.AlunoInterface;
+import shokunin.group.com.biblioteca.domain.users.enums.NivelEnsino;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,7 +28,7 @@ public final class Aluno extends Usuario implements AlunoInterface {
         Map<String,String> detalhes = new LinkedHashMap<>();
         detalhes.put("Matricula",getMatricula());
         detalhes.put("Nivel Ensino",getNivelEnsino().toString());
-        return detalhes;
+        return Collections.unmodifiableMap(detalhes);
     }
 
     @Override

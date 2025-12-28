@@ -1,4 +1,4 @@
-package shokunin.group.com.biblioteca.domain.contracts;
+package shokunin.group.com.biblioteca.domain.users.contracts;
 
 public interface AlunoInterface {
     public abstract  String getNivelEnsino();

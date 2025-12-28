@@ -1,4 +1,4 @@
-package shokunin.group.com.biblioteca.domain.enums;
+package shokunin.group.com.biblioteca.domain.users.enums;
 
 public enum NivelEnsino {
     COLEGIAL,

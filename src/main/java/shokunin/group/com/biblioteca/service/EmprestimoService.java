@@ -1,6 +1,10 @@
 package shokunin.group.com.biblioteca.service;
 
-import shokunin.group.com.biblioteca.domain.*;
+import shokunin.group.com.biblioteca.domain.emprestimos.Emprestimo;
+import shokunin.group.com.biblioteca.domain.itens.LibraryItem;
+import shokunin.group.com.biblioteca.domain.users.Aluno;
+import shokunin.group.com.biblioteca.domain.users.Funcionario;
+import shokunin.group.com.biblioteca.domain.users.Usuario;
 import shokunin.group.com.biblioteca.repository.EmprestimoRepository;
 import shokunin.group.com.biblioteca.strategy.contracts.EmprestimoStrategy;
 import shokunin.group.com.biblioteca.exceptions.LibraryExceptionFactory;
@@ -34,7 +38,7 @@ public class EmprestimoService {
             throw LibraryExceptionFactory.regraNaoEncontrada(usuario.getClass().getSimpleName());
         }
 
-        if (!item.isDisponivel()){
+        if (!item.getStatus().permiteEmprestimo()){
             throw LibraryExceptionFactory.itemIndisponivel(item.getTitulo());
         }
 
@@ -42,7 +46,7 @@ public class EmprestimoService {
                 .comPrazo(regra.getDiasEmprestimo())
                 .build();
 
-        item.setDisponivel(false);
+        item.emprestar();
 
         novoEmprestimo.getDetalhes().forEach((chave,valor) -> System.out.println(chave + ": " + valor));
 
@@ -57,38 +61,14 @@ public class EmprestimoService {
 
     public double processarDevolucao(Emprestimo emprestimo, LocalDate dataRetorno){
 
-        emprestimo.getItem().setDisponivel(true);// retorna o objeto ao status disponivel
-        emprestimo.registraDevolucaoEfetiva(dataRetorno);
         EmprestimoStrategy regra = switch (emprestimo.getUsuario()){
             case Aluno a -> estrategias.get("ALUNO");
             case Funcionario f -> estrategias.get("FUNCIONARIO");
 
         };
 
-        if (dataRetorno.isAfter(emprestimo.getDataPrevistaDevolucao())){
-            long diasAtraso = java.time.temporal.ChronoUnit.DAYS.between(
-                    emprestimo.getDataPrevistaDevolucao(),
-                    dataRetorno
-            );
-            double multa = calcularMulta(regra, (int)diasAtraso);
-            emprestimo.setValorMulta(multa);
-            return multa;
-
-        }
-
-        return 0.0; //retorno sem multa
+        return emprestimo.finalizarEmprestimo(dataRetorno,regra);
 
     }
 
-    private double calcularMulta(EmprestimoStrategy regra, int dias){
-
-        double multa = regra.getMultaDiaria() * dias;
-
-        if (multa > regra.getMultaMaxima()){
-            return regra.getMultaMaxima();
-        } else if (multa < regra.getMultaMinima()){
-            return regra.getMultaMinima();
-        }
-        return multa;
-    }
 }

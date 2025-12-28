@@ -1,6 +1,7 @@
-package shokunin.group.com.biblioteca.domain;
+package shokunin.group.com.biblioteca.domain.users;
 
-import shokunin.group.com.biblioteca.domain.contracts.FuncionarioInterface;
+import shokunin.group.com.biblioteca.domain.unidades.Unidade;
+import shokunin.group.com.biblioteca.domain.users.contracts.FuncionarioInterface;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

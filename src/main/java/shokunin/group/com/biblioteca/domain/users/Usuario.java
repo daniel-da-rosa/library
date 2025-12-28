@@ -1,4 +1,6 @@
-package shokunin.group.com.biblioteca.domain;
+package shokunin.group.com.biblioteca.domain.users;
+
+import shokunin.group.com.biblioteca.domain.unidades.Unidade;
 
 import java.util.Map;
 

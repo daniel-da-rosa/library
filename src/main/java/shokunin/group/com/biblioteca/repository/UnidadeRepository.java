@@ -1,5 +1,5 @@
 package shokunin.group.com.biblioteca.repository;
-import shokunin.group.com.biblioteca.domain.Unidade;
+import shokunin.group.com.biblioteca.domain.unidades.Unidade;
 import shokunin.group.com.biblioteca.util.DBConnector;
 
 import java.sql.*;

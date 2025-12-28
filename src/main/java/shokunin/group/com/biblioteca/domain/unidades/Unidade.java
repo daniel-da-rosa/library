@@ -1,8 +1,8 @@
-package shokunin.group.com.biblioteca.domain;
+package shokunin.group.com.biblioteca.domain.unidades;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
 
 public class Unidade {
     private Integer id;
@@ -41,7 +41,7 @@ public class Unidade {
         detalhes.put("Endereco",getEndereco());
         detalhes.put("Telefone",getTelefone());
         detalhes.put("Email",getEmail());
-        return detalhes;
+        return Collections.unmodifiableMap(detalhes);
     }
 
     public static class UnidadeBuilder {
