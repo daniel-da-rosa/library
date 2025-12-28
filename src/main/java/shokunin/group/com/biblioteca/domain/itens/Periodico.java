@@ -41,7 +41,7 @@ public class Periodico extends LibraryItem{
         private String issn;
         private Integer numero;
 
-        public PeriodicoBuilder(String titulo, String issn, StatusItemLibray status){
+        public PeriodicoBuilder(String titulo, String issn, StatusItemLibrary status){
             super(titulo,status);
 
             if(issn == null || issn.isBlank()){

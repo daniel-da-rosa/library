@@ -1,13 +1,11 @@
 package shokunin.group.com.biblioteca.domain.itens;
 
-import shokunin.group.com.biblioteca.domain.itens.enums.Status;
-
 import java.util.Map;
 
 public abstract class LibraryItem {
     protected Integer id;
     protected final String titulo;
-    protected StatusItemLibray status;
+    protected StatusItemLibrary status;
 
     protected LibraryItem(Builder<?> builder) {
         this.id = builder.id;
@@ -27,7 +25,7 @@ public abstract class LibraryItem {
     public void setId(Integer id){
         this.id = id;
     }
-    public StatusItemLibray getStatus(){
+    public StatusItemLibrary getStatus(){
         return status;
     }
     public void devolver(){
@@ -41,9 +39,9 @@ public abstract class LibraryItem {
 
         protected Integer id;
         protected String titulo;
-        protected StatusItemLibray status;
+        protected StatusItemLibrary status;
 
-        public Builder(String titulo, StatusItemLibray status) {
+        public Builder(String titulo, StatusItemLibrary status) {
             if (titulo == null || titulo.isBlank()) {
                 throw new IllegalArgumentException("Título é obrigatório");
             }

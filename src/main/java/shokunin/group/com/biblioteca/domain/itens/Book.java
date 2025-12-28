@@ -44,7 +44,7 @@ public class Book extends LibraryItem{
         private String genero;
         private String isbn;
 
-        public BookBuilder(String titulo,String isbn,String autor,Integer anoPublicacao,StatusItemLibray status){
+        public BookBuilder(String titulo, String isbn, String autor, Integer anoPublicacao, StatusItemLibrary status){
             super(titulo, status);
             if(isbn == null || isbn.isBlank()){
                 throw new IllegalArgumentException("ISBN é obrigatório");
