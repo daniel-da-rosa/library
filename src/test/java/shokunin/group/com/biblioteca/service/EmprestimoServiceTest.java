@@ -96,4 +96,83 @@ public class EmprestimoServiceTest {
                 .isInstanceOf(ItemIndisponivelException.class); //valida se a exceção foi lancada
 
     }
+
+    @Test
+    @DisplayName("Deve impedir a devolução de emprestimo já finalizado")
+    void deveValidarEmprestimoFinalizado(){
+        Emprestimo emprestimo = service.processarEmprestimo(aluno,livro);
+
+        //primeira devolucao
+        service.processarDevolucao(emprestimo,LocalDate.now().plusDays(5));
+
+        //segunda devolucao
+        assertThatThrownBy(() ->
+                service.processarDevolucao(emprestimo,LocalDate.now().plusDays(6)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Emprestimo ja finalizado");
+
+    }
+
+    @Test
+    @DisplayName("Deve calcular multa dentro do limites Min e Max")
+    void deveCalcularMultaDentroDosLimites(){
+        Emprestimo emprestimoMax = service.processarEmprestimo(aluno,livro);
+
+        //simula a devolucao com atraso max
+        LocalDate dataDevolucaoMax = LocalDate.now().plusDays(100);
+        double multaMax = service.processarDevolucao(emprestimoMax,dataDevolucaoMax);
+
+        //verifica se a multa foi calculada corretamente - por hora o valor maximo  está hardcoded - fixo.
+        assertThat(multaMax).isEqualTo(10);
+
+        //simula a devolucao com atraso min
+        Emprestimo emprestimoMin = service.processarEmprestimo(aluno,livro);
+        LocalDate dataDevolucaoMin = LocalDate.now().plusDays(8);
+        double multaMin = service.processarDevolucao(emprestimoMin,dataDevolucaoMin);
+
+        //verifica se a multa foi calculada corretamente - por hora o valor minimo está hardcoded - fixo.
+        assertThat(multaMin).isEqualTo(1);
+
+    }
+
+    @Test
+    @DisplayName("Não deve calcular multa quando a devolução é feita no prazo.")
+    void naoDeveCalcularMulta(){
+
+        Emprestimo emprestimo = service.processarEmprestimo(aluno,livro);
+        LocalDate dataDevolucao = LocalDate.now().plusDays(5);
+        double multa = service.processarDevolucao(emprestimo,dataDevolucao);
+
+        //verifica se a multa foi calculada corretamente - por hora o valor minimo está hardcoded - fixo.
+        assertThat(multa).isZero();
+        assertThat(emprestimo.getMulta()).isZero();
+
+    }
+    @Test
+    @DisplayName("Deve restaurar um item para disponviel após a devolução")
+    void deveRestaurarItemAposDevolucao(){
+
+        Emprestimo emprestimo = service.processarEmprestimo(aluno,livro);
+
+        //verifica se o item foi emprestado
+        assertThat(livro.getStatus().permiteEmprestimo()).isFalse();
+
+        service.processarDevolucao(emprestimo,LocalDate.now().plusDays(5));
+        //verifica se o item foi restaurado para disponivel
+        assertThat(livro.getStatus().permiteEmprestimo()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Deve impedir uma data de devolução anterior a data de emprestimo")
+    void deveImpedirDataDevolucaoAnteriorDataEmprestimo(){
+
+        Emprestimo emprestimo = service.processarEmprestimo(aluno,livro);
+
+        LocalDate dataPassado = LocalDate.now().minusDays(5);
+
+        assertThatThrownBy(() -> service.processarDevolucao(emprestimo,dataPassado))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Data de devolucao nao pode ser anterior a data de emprestimo");
+
+    }
 }
