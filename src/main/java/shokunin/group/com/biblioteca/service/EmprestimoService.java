@@ -9,6 +9,7 @@ import shokunin.group.com.biblioteca.repository.EmprestimoRepository;
 import shokunin.group.com.biblioteca.strategy.contracts.EmprestimoStrategy;
 import shokunin.group.com.biblioteca.exceptions.items.LibraryExceptionFactory;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -52,14 +53,14 @@ public class EmprestimoService {
 
 
         //TODO: Verificar se o usuario ja possui o maximo de itens emprestados
-        emprestimoRepository.salvarEmprestimo(novoEmprestimo);
+        emprestimoRepository.criarEmprestimo(novoEmprestimo);
 
         return novoEmprestimo;
 
     }
 
 
-    public double processarDevolucao(Emprestimo emprestimo, LocalDate dataRetorno){
+    public BigDecimal processarDevolucao(Emprestimo emprestimo, LocalDate dataRetorno){
 
         EmprestimoStrategy regra = switch (emprestimo.getUsuario()){
             case Aluno a -> estrategias.get("ALUNO");

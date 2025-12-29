@@ -1,10 +1,12 @@
 package shokunin.group.com.biblioteca.strategy.contracts;
 
+import java.math.BigDecimal;
+
 public interface EmprestimoStrategy {
     int getDiasEmprestimo();
-    double getMultaDiaria();
-    double getMultaMaxima();
-    double getMultaMinima();
+    BigDecimal getMultaDiaria();
+    BigDecimal getMultaMaxima();
+    BigDecimal getMultaMinima();
     int getMaximoItens();
     int getMinimoItens();
     String getTipoUsuario();

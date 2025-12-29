@@ -1,5 +1,6 @@
 package shokunin.group.com.biblioteca.domain.users;
 
+import shokunin.group.com.biblioteca.domain.emprestimos.Emprestimo;
 import shokunin.group.com.biblioteca.domain.unidades.Unidade;
 
 import java.util.Map;
@@ -7,7 +8,7 @@ import java.util.Map;
 public sealed abstract class Usuario permits Aluno,Funcionario{
     private  Integer id;
     private final String nome;
-    private final String email;
+    private final Email email;
     private final String senha;
     private final String telefone;
     private final String documento;
@@ -32,7 +33,7 @@ public sealed abstract class Usuario permits Aluno,Funcionario{
     public String getDocumento(){return documento;}
     public boolean isAtivo(){return ativo;}
     public Unidade getUnidade(){return unidade;}
-    public String getEmail(){return email;}
+    public Email getEmail(){return email;}
     public String getSenha(){return senha;}
     public String getTelefone(){return telefone;}
 
@@ -48,21 +49,18 @@ public sealed abstract class Usuario permits Aluno,Funcionario{
         private String documento;
         private boolean ativo = true;
         private Unidade unidade;
-        private String email;
+        private Email email;
         private String senha;
         private String telefone;
 
-        public UsuarioBuilder(String nome, String documento, Unidade unidade){
-            if(nome==null || nome.isBlank() ||documento == null || documento.isBlank()){
-                throw new IllegalArgumentException("Nome e documento são obrigatórios");
-            }
-
-            this.nome=nome;
-            this.documento= documento;
-            this.unidade = unidade;
+        public UsuarioBuilder(String nome, String documento, Unidade unidade, Email email){
+            this.nome = java.util.Objects.requireNonNull(nome,"Nome é obrigatório");
+            this.documento = java.util.Objects.requireNonNull(documento,"Documento é obrigatório");
+            this.unidade = java.util.Objects.requireNonNull(unidade,"Unidade é obrigatória");
+            this.email = java.util.Objects.requireNonNull(email,"Email é obrigatório");
         }
 
-        public T comEmail(String email){
+        public T comEmail(Email email){
             this.email = email;
             return self();
         }

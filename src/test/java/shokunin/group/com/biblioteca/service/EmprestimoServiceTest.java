@@ -5,18 +5,22 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import shokunin.group.com.biblioteca.domain.emprestimos.Emprestimo;
 import shokunin.group.com.biblioteca.domain.itens.StatusItemLibrary;
+import shokunin.group.com.biblioteca.domain.users.Email;
 import shokunin.group.com.biblioteca.domain.users.enums.NivelEnsino;
 import shokunin.group.com.biblioteca.domain.itens.Book;
 import shokunin.group.com.biblioteca.domain.unidades.Unidade;
 import shokunin.group.com.biblioteca.domain.users.Aluno;
 import shokunin.group.com.biblioteca.domain.users.Usuario;
 import shokunin.group.com.biblioteca.repository.EmprestimoRepository;
+import shokunin.group.com.biblioteca.repository.ItemLibraryRepository;
 import shokunin.group.com.biblioteca.repository.UnidadeRepository;
 import shokunin.group.com.biblioteca.repository.UsuarioRepository;
 import shokunin.group.com.biblioteca.strategy.ALunoEmprestimoStrategy;
 import shokunin.group.com.biblioteca.strategy.FuncionarioEmprestimoStrategy;
 import shokunin.group.com.biblioteca.exceptions.items.ItemIndisponivelException;
+import shokunin.group.com.biblioteca.util.DBConnector;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,13 +33,16 @@ public class EmprestimoServiceTest {
     private Book livro;
     private UnidadeRepository unidadeRepository;
     private UsuarioRepository usuarioRepository;
+    private EmprestimoRepository emprestimoRepository;
 
     @BeforeEach
     void setup(){
 
+        DBConnector.createTables();//Cria o banco de dados SqLite
+
          unidadeRepository = new UnidadeRepository();
          usuarioRepository = new UsuarioRepository();
-         EmprestimoRepository emprestimoRepository = new EmprestimoRepository();
+         emprestimoRepository = new EmprestimoRepository();
 
          //carrega as regras para dentro do service e repositorio para persistir os dados
         service = new EmprestimoService(List.of(
@@ -55,21 +62,24 @@ public class EmprestimoServiceTest {
         unidadeRepository.salvar(unidade);
 
 
-        aluno = new Aluno.AlunoBuilder("Moto Moto","1234",unidade)
+        aluno = new Aluno.AlunoBuilder("Moto Moto","1234",unidade, Email.of("mandagascar@julien.com"))
                 .comMatricula("Mat -2025-001")
                 .comNivelEnsino(NivelEnsino.TECNOLOGO)
-                .comEmail("mandagascar@julien.com")
                 .comTelefone("31 9 9765-0983")
                 .build();
 
         usuarioRepository.salvar(aluno);
 
-        livro = new Book.BookBuilder("O Senhor dos Anéis","978-3-16-148410-0","J.R.R. Tolkien",1954, StatusItemLibrary.disponivel() )
+        ItemLibraryRepository itemRepository = new ItemLibraryRepository();
+
+        livro = new Book.BookBuilder("O SENHOR DOS ANEIS","978-3-16-148410-0","J.R.R. Tolkien",1954, StatusItemLibrary.disponivel() )
                 .comGenero("Fantasia")
                 .build();
-        //todo criar repositorio do itemLibrary itemLibrayRepository.salvar(livro);
+       // itemRepository.salvar(livro);
 
         livro.setId(1);
+
+
     }
     @Test
     @DisplayName("Deve calcular a multa corretamente quando houver atraso")
@@ -78,10 +88,10 @@ public class EmprestimoServiceTest {
 
         //simula a devolucao com atraso
         LocalDate dataDevolucao = LocalDate.now().plusDays(10);
-        double multa = service.processarDevolucao(emprestimo,dataDevolucao);
+        BigDecimal multa = service.processarDevolucao(emprestimo,dataDevolucao);
 
         //verifica se a multa foi calculada corretamente
-        assertThat(multa).isGreaterThan(0); // verifica se a multa foi calculada corretamente. É auto explicativo mas ajuda a entender o que está acontecendo.
+        assertThat(multa).isGreaterThan(new BigDecimal(0.0)); // verifica se a multa foi calculada corretamente. É auto explicativo mas ajuda a entender o que está acontecendo.
         assertThat(emprestimo.getMulta()).isEqualTo(multa);
         assertThat(livro.getStatus().permiteEmprestimo()).isTrue(); //verifica se o livro foi devolvido corretamente
 
@@ -120,18 +130,18 @@ public class EmprestimoServiceTest {
 
         //simula a devolucao com atraso max
         LocalDate dataDevolucaoMax = LocalDate.now().plusDays(100);
-        double multaMax = service.processarDevolucao(emprestimoMax,dataDevolucaoMax);
+        BigDecimal multaMax = service.processarDevolucao(emprestimoMax,dataDevolucaoMax);
 
         //verifica se a multa foi calculada corretamente - por hora o valor maximo  está hardcoded - fixo.
-        assertThat(multaMax).isEqualTo(10);
+        assertThat(multaMax).isEqualByComparingTo(BigDecimal.valueOf(10));
 
         //simula a devolucao com atraso min
         Emprestimo emprestimoMin = service.processarEmprestimo(aluno,livro);
         LocalDate dataDevolucaoMin = LocalDate.now().plusDays(8);
-        double multaMin = service.processarDevolucao(emprestimoMin,dataDevolucaoMin);
+        BigDecimal multaMin = service.processarDevolucao(emprestimoMin,dataDevolucaoMin);
 
         //verifica se a multa foi calculada corretamente - por hora o valor minimo está hardcoded - fixo.
-        assertThat(multaMin).isEqualTo(1);
+        assertThat(multaMin).isEqualByComparingTo(BigDecimal.valueOf(1));
 
     }
 
@@ -141,7 +151,7 @@ public class EmprestimoServiceTest {
 
         Emprestimo emprestimo = service.processarEmprestimo(aluno,livro);
         LocalDate dataDevolucao = LocalDate.now().plusDays(5);
-        double multa = service.processarDevolucao(emprestimo,dataDevolucao);
+        BigDecimal multa = service.processarDevolucao(emprestimo,dataDevolucao);
 
         //verifica se a multa foi calculada corretamente - por hora o valor minimo está hardcoded - fixo.
         assertThat(multa).isZero();
@@ -173,6 +183,24 @@ public class EmprestimoServiceTest {
         assertThatThrownBy(() -> service.processarDevolucao(emprestimo,dataPassado))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Data de devolucao nao pode ser anterior a data de emprestimo");
+
+    }
+    @Test
+    @DisplayName("Deve validar clico completo de persistencia no banco de dados")
+    void deveValidarClicoCompletoDePersistenciaNoBancoDeDados(){
+
+        Emprestimo emprestimoCriado = service.processarEmprestimo(aluno,livro);
+
+        Emprestimo emprestimoRecuperado = emprestimoRepository.buscarEmprestimoPorId(1)
+                .orElseThrow(() -> new RuntimeException("Emprestimo nao encontrado"));
+
+        // 3. Asserções de Reidratação (Verificando se os objetos voltaram "vivos")
+        assertThat(emprestimoRecuperado.getUsuario().getNome()).isEqualTo(aluno.getNome());
+        assertThat(emprestimoRecuperado.getItem().getTitulo()).isEqualTo(livro.getTitulo());
+        assertThat(emprestimoRecuperado.getDataEmprestimo()).isEqualTo(LocalDate.now());
+
+        // Verifica se os Value Objects (Email e Status) voltaram corretos
+        assertThat(emprestimoRecuperado.getUsuario().getEmail().toString()).isEqualTo("mandagascar@julien.com");
 
     }
 }

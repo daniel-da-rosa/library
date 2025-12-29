@@ -2,6 +2,8 @@ package shokunin.group.com.biblioteca.strategy;
 
 import shokunin.group.com.biblioteca.strategy.contracts.EmprestimoStrategy;
 
+import java.math.BigDecimal;
+
 public class ALunoEmprestimoStrategy implements EmprestimoStrategy {
     @Override
     public int getDiasEmprestimo(){
@@ -9,16 +11,16 @@ public class ALunoEmprestimoStrategy implements EmprestimoStrategy {
     }
 
     @Override
-    public double getMultaDiaria(){
-        return 0.5;
+    public BigDecimal getMultaDiaria(){
+        return new BigDecimal(0.5);
     }
     @Override
-    public double getMultaMaxima(){
-        return 10;
+    public BigDecimal getMultaMaxima(){
+        return new BigDecimal(10);
     }
     @Override
-    public double getMultaMinima(){
-        return 1.0;
+    public BigDecimal getMultaMinima(){
+        return new BigDecimal(1.0);
     }
     @Override
     public int getMaximoItens(){

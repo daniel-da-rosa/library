@@ -3,6 +3,7 @@ import shokunin.group.com.biblioteca.domain.itens.LibraryItem;
 import shokunin.group.com.biblioteca.domain.users.Usuario;
 import shokunin.group.com.biblioteca.strategy.contracts.EmprestimoStrategy;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -17,7 +18,7 @@ public class Emprestimo {
     private final Usuario usuario;
     private final LibraryItem item;
     private LocalDate devolucaoEfetiva;
-    private double multa;
+    private BigDecimal multa = BigDecimal.ZERO;
 
     public Emprestimo(EmprestimoBuilder builder) {
         this.id = builder.id;
@@ -50,7 +51,7 @@ public class Emprestimo {
         return devolucaoEfetiva;
     }
 
-    public double getMulta(){
+    public BigDecimal getMulta(){
         return multa;
     }
 
@@ -69,7 +70,7 @@ public class Emprestimo {
         return Collections.unmodifiableMap(detalhes);
     }
 
-    public double finalizarEmprestimo(LocalDate dataRetorno, EmprestimoStrategy regra){
+    public BigDecimal finalizarEmprestimo(LocalDate dataRetorno, EmprestimoStrategy regra){
 
         java.util.Objects.requireNonNull(dataRetorno, "Data de devolucao é obrigatória");
         java.util.Objects.requireNonNull(regra, "Regra de emprestimo é obrigatória");
@@ -93,9 +94,14 @@ public class Emprestimo {
         return this.multa;
     }
 
-    private double calcularValorComLimite(EmprestimoStrategy regra,Long dias){
-        double valor = regra.getMultaDiaria() * dias;
-        return Math.min(Math.max(valor,regra.getMultaMinima()),regra.getMultaMaxima());
+    private BigDecimal calcularValorComLimite(EmprestimoStrategy regra,Long dias){
+
+        BigDecimal valorCalculado = regra.getMultaDiaria()
+                .multiply(new BigDecimal(dias));
+
+        return valorCalculado
+                .max(regra.getMultaMinima())
+                .min(regra.getMultaMaxima());
     }
 
     public static class EmprestimoBuilder{
@@ -104,6 +110,8 @@ public class Emprestimo {
         private LocalDate dataPrevistaDevolucao;
         private Usuario usuario;
         private LibraryItem item;
+        private LocalDate devolucaoEfetiva;
+        private BigDecimal multa;
 
         public EmprestimoBuilder (Usuario usuario, LibraryItem item) {
             this.usuario = usuario;
@@ -114,7 +122,27 @@ public class Emprestimo {
             this.dataPrevistaDevolucao = this.dataEmprestimo.plusDays(dias);
             return this;
         }
+        public EmprestimoBuilder comDataEmprestimo(LocalDate dataEmprestimo){
+            this.dataEmprestimo = dataEmprestimo;
+            return this;
+        }
+        public EmprestimoBuilder comDataPrevistaDevolucao(LocalDate dataPrevistaDevolucao){
+            this.dataPrevistaDevolucao = dataPrevistaDevolucao;
+            return this;
+        }
+        public EmprestimoBuilder comDataEfetiva(LocalDate devolucaoEfetiva){
+            this.devolucaoEfetiva = devolucaoEfetiva;
+            return this;
+        }
 
+        public EmprestimoBuilder comMulta(BigDecimal multa){
+            this.multa = multa;
+            return this;
+        }
+        public EmprestimoBuilder comId(Integer id){
+            this.id = id;
+            return this;
+        }
         public Emprestimo build(){
             if (dataPrevistaDevolucao.isBefore(dataEmprestimo)) {
                 throw new IllegalArgumentException("Data de devolucao nao pode ser anterior a data de emprestimo");

@@ -68,7 +68,7 @@ public class DBConnector {
                     DATA_ANO_PUBLICACAO TEXT,
                     AUTOR TEXT,
                     ISBN_ISSN TEXT NOT NULL,
-                    DISPONIVEL BOOLEAN DEFAULT TRUE,
+                    STATUS TEXT DEFAULT 'DISPONIVEL',
                     NUMERO INTEGER,
                     UNIDADE_ID INTEGER,
                     FOREIGN KEY (unidade_id) REFERENCES unidades(id)

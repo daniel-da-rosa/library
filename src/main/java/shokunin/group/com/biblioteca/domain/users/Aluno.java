@@ -40,8 +40,8 @@ public final class Aluno extends Usuario implements AlunoInterface {
         private String matricula;
         private NivelEnsino nivelEnsino;
 
-        public AlunoBuilder(String nome, String documento, Unidade unidade){
-            super(nome,documento,unidade); //chama o builder do usuario
+        public AlunoBuilder(String nome, String documento, Unidade unidade,Email email){
+            super(nome,documento,unidade,email); //chama o builder do usuario
 
         }
         public AlunoBuilder comMatricula(String matricula){

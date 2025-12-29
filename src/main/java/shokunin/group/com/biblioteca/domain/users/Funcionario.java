@@ -41,8 +41,8 @@ public final class Funcionario extends Usuario implements FuncionarioInterface {
         private String registro;
         private String cargo;
 
-        public FuncionarioBuilder(String nome, String documento, Unidade unidade){
-            super(nome,documento,unidade);
+        public FuncionarioBuilder(String nome, String documento, Unidade unidade,Email email){
+            super(nome,documento,unidade,email);
 
         }
 

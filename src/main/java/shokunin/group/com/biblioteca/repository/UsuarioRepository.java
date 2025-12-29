@@ -1,5 +1,6 @@
 package shokunin.group.com.biblioteca.repository;
 
+import shokunin.group.com.biblioteca.domain.users.Email;
 import shokunin.group.com.biblioteca.domain.users.enums.NivelEnsino;
 import shokunin.group.com.biblioteca.domain.unidades.Unidade;
 import shokunin.group.com.biblioteca.domain.users.Aluno;
@@ -50,7 +51,7 @@ public class UsuarioRepository {
                    un.endereco AS unidadeEndereco,
                    un.telefone AS unidadeTelefone
               FROM usuarios u
-              JOIN unidades un ON u.id_unidade = un.id
+              JOIN unidades un ON u.UNIDADE_ID = un.id
              WHERE u.id = ?
             """;
 
@@ -122,7 +123,7 @@ public class UsuarioRepository {
 
     private void setCamposComuns(PreparedStatement pstmt, Usuario usuario) throws SQLException {
         pstmt.setString(1, usuario.getNome());
-        pstmt.setString(2, usuario.getEmail());
+        pstmt.setString(2, usuario.getEmail().toString());
         pstmt.setString(3, usuario.getSenha());
         pstmt.setString(4, usuario.getTelefone());
         pstmt.setString(5, usuario.getDocumento());
@@ -179,9 +180,9 @@ public class UsuarioRepository {
         return new Aluno.AlunoBuilder(
                 rs.getString("NOME"),
                 rs.getString("DOCUMENTO"),
-                unidade)
+                unidade,
+                Email.of(rs.getString("EMAIL")))
                 .comId(rs.getInt("id"))
-                .comEmail(rs.getString("EMAIL"))
                 .comMatricula(rs.getString("MATRICULA_REGISTRO"))
                 .comNivelEnsino(nivelEnsino)
                 .comAtivo(rs.getBoolean("ATIVO"))
@@ -194,9 +195,9 @@ public class UsuarioRepository {
         return new Funcionario.FuncionarioBuilder(
                 rs.getString("NOME"),
                 rs.getString("DOCUMENTO"),
-                unidade)
+                unidade,
+                Email.of(rs.getString("EMAIL")))
                 .comId(rs.getInt("id"))
-                .comEmail(rs.getString("EMAIL"))
                 .comRegistro(rs.getString("MATRICULA_REGISTRO"))
                 .comAtivo(rs.getBoolean("ATIVO"))
                 .comTelefone(rs.getString("FONE"))

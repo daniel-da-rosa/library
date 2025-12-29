@@ -13,12 +13,10 @@ public final class StatusItemLibrary {
         return new StatusItemLibrary(Status.DISPONIVEL);
     }
 
-    public StatusItemLibrary emprestado() {
-        if(this.tipo != Status.DISPONIVEL){
-            throw new IllegalArgumentException("Item não disponível para empréstimo");
-        }
+    public static StatusItemLibrary emprestado() {
         return new StatusItemLibrary(Status.EMPRESTADO);
     }
+
     public StatusItemLibrary reservado(){
         if(this.tipo != Status.DISPONIVEL){
             throw new IllegalArgumentException("Item não disponível para reserva");
