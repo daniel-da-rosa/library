@@ -11,10 +11,12 @@ import shokunin.group.com.biblioteca.domain.itens.Book;
 import shokunin.group.com.biblioteca.domain.unidades.Unidade;
 import shokunin.group.com.biblioteca.domain.users.Aluno;
 import shokunin.group.com.biblioteca.domain.users.Usuario;
-import shokunin.group.com.biblioteca.repository.EmprestimoRepository;
+import shokunin.group.com.biblioteca.repository.EmprestimoRepositorySQLite;
 import shokunin.group.com.biblioteca.repository.ItemLibraryRepository;
 import shokunin.group.com.biblioteca.repository.UnidadeRepository;
 import shokunin.group.com.biblioteca.repository.UsuarioRepository;
+import shokunin.group.com.biblioteca.repository.contracts.IEmprestimoRepository;
+import shokunin.group.com.biblioteca.repository.fakes.FakeEmprestimoRepository;
 import shokunin.group.com.biblioteca.strategy.ALunoEmprestimoStrategy;
 import shokunin.group.com.biblioteca.strategy.FuncionarioEmprestimoStrategy;
 import shokunin.group.com.biblioteca.exceptions.items.ItemIndisponivelException;
@@ -33,53 +35,47 @@ public class EmprestimoServiceTest {
     private Book livro;
     private UnidadeRepository unidadeRepository;
     private UsuarioRepository usuarioRepository;
-    private EmprestimoRepository emprestimoRepository;
+    private EmprestimoRepositorySQLite emprestimoRepositorySQLite;
+    private IEmprestimoRepository repository;
 
     @BeforeEach
     void setup(){
 
-        DBConnector.createTables();//Cria o banco de dados SqLite
+        // 1. Inicializa o FAKE
+        this.repository = new FakeEmprestimoRepository();
 
-         unidadeRepository = new UnidadeRepository();
-         usuarioRepository = new UsuarioRepository();
-         emprestimoRepository = new EmprestimoRepository();
-
-         //carrega as regras para dentro do service e repositorio para persistir os dados
+        // 2. Passa "this.repository" (o Fake)
         service = new EmprestimoService(List.of(
-                  new ALunoEmprestimoStrategy(),
-                  new FuncionarioEmprestimoStrategy()
-        ),emprestimoRepository);
+                new ALunoEmprestimoStrategy(),
+                new FuncionarioEmprestimoStrategy()
+        ), this.repository); // <--- AQUI MUDOU
 
-        //cria os objetos necessarios para os testes
+        // 3. Cria os objetos APENAS EM MEMÓRIA
         Unidade unidade = new Unidade.UnidadeBuilder()
                 .comNome("Escola Senai")
                 .comEndereco("Rua Senai, 123")
                 .comTelefone("123456789")
                 .comEmail("escola@senai.com")
                 .build();
+        //  ID fake para não ficar null
+        unidade.setId(1);
 
-        //Persiste no banco de dados
-        unidadeRepository.salvar(unidade);
-
+        // 4. Não precisa salvar no banco
 
         aluno = new Aluno.AlunoBuilder("Moto Moto","1234",unidade, Email.of("mandagascar@julien.com"))
                 .comMatricula("Mat -2025-001")
                 .comNivelEnsino(NivelEnsino.TECNOLOGO)
                 .comTelefone("31 9 9765-0983")
                 .build();
+        // Damos um ID fake
+        aluno.setId(100);
 
-        usuarioRepository.salvar(aluno);
-
-        ItemLibraryRepository itemRepository = new ItemLibraryRepository();
+        // 5. NÃO precisa salvar no banco
 
         livro = new Book.BookBuilder("O SENHOR DOS ANEIS","978-3-16-148410-0","J.R.R. Tolkien",1954, StatusItemLibrary.disponivel() )
                 .comGenero("Fantasia")
                 .build();
-       // itemRepository.salvar(livro);
-
         livro.setId(1);
-
-
     }
     @Test
     @DisplayName("Deve calcular a multa corretamente quando houver atraso")
@@ -186,12 +182,12 @@ public class EmprestimoServiceTest {
 
     }
     @Test
-    @DisplayName("Deve validar clico completo de persistencia no banco de dados")
+    @DisplayName("Deve validar clico completo de dados")
     void deveValidarClicoCompletoDePersistenciaNoBancoDeDados(){
 
         Emprestimo emprestimoCriado = service.processarEmprestimo(aluno,livro);
 
-        Emprestimo emprestimoRecuperado = emprestimoRepository.buscarEmprestimoPorId(1)
+        Emprestimo emprestimoRecuperado = repository.buscarEmprestimoPorId(emprestimoCriado.getId())
                 .orElseThrow(() -> new RuntimeException("Emprestimo nao encontrado"));
 
         // 3. Asserções de Reidratação (Verificando se os objetos voltaram "vivos")
@@ -204,3 +200,5 @@ public class EmprestimoServiceTest {
 
     }
 }
+
+

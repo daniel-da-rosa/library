@@ -5,27 +5,33 @@ import shokunin.group.com.biblioteca.domain.itens.LibraryItem;
 import shokunin.group.com.biblioteca.domain.users.Usuario;
 import shokunin.group.com.biblioteca.exceptions.repository.RepositoryExceptionFactory;
 import shokunin.group.com.biblioteca.util.DBConnector;
+import shokunin.group.com.biblioteca.repository.contracts.IEmprestimoRepository;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-public class EmprestimoRepository {
+
+public class EmprestimoRepositorySQLite implements IEmprestimoRepository {
 
     private UsuarioRepository usuarioRepository = new UsuarioRepository();
     private ItemLibraryRepository itemLibraryRepository = new ItemLibraryRepository();
 
-    public void criarEmprestimo(Emprestimo emprestimo){
-        String sql = "INSERT INTO emprestimos (USUARIO_ID, ITEMLIBRARY_ID, DATA_EMPRESTIMO, DATA_DEVOLUCAO_PREVISTA,DATA_DEVOLUCAO_REAL,MULTA,STATUS) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    @Override
+    public Integer criarEmprestimo(Emprestimo emprestimo){
+        String sql = """
+                INSERT 
+                  INTO emprestimos (USUARIO_ID, ITEMLIBRARY_ID, DATA_EMPRESTIMO, DATA_DEVOLUCAO_PREVISTA,DATA_DEVOLUCAO_REAL,MULTA,STATUS) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?)
+                """;
 
         //Usando o Pool de conexão - evita de ficar abrindo e fechando conexão a cada operção.
 
         try(Connection conn = DBConnector.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)){
+            PreparedStatement pstmt = conn.prepareStatement(sql,java.sql.Statement.RETURN_GENERATED_KEYS)){
                 pstmt.setInt(1,emprestimo.getUsuario().getId());
                 pstmt.setInt(2,emprestimo.getItem().getId());
                 pstmt.setString(3,emprestimo.getDataEmprestimo().toString());
@@ -33,11 +39,24 @@ public class EmprestimoRepository {
                 pstmt.setString(5,null);
                 pstmt.setBigDecimal(6,emprestimo.getMulta());
                 pstmt.setString(7,"ABERTO");
-                pstmt.executeUpdate();
-            System.out.println("Emprestimo salvo com sucesso");
+
+                int linhasAfetadas = pstmt.executeUpdate();
+
+                if (linhasAfetadas > 0){
+                    //Recupera o id Gerado pelo banco
+                    try(ResultSet generatedKeys = pstmt.getGeneratedKeys()){
+                        if (generatedKeys.next()){
+                            Integer novoId = generatedKeys.getInt(1);
+                            emprestimo.setId(novoId);
+                            return novoId;
+                        }
+                    }
+                }throw new SQLException("Erro ao salvar emprestimo: Id não encontrado " );
+
     }catch (SQLException e){
-        System.out.println("Erro ao salvar emprestimo: " + e.getMessage());
+        throw new RuntimeException("Erro ao salvar emprestimo: " + e.getMessage());
         }
+
     }
 
     public void alterarEmprestimo(Emprestimo emprestimo) {
@@ -48,7 +67,7 @@ public class EmprestimoRepository {
             PreparedStatement pstmt = conn.prepareStatement(sql)){
 
             if (emprestimo.getDevolucaoEfetiva() !=null){
-                pstmt.setDate(1,java.sql.Date.valueOf(emprestimo.getDevolucaoEfetiva().toString()));
+                pstmt.setString(1,emprestimo.getDevolucaoEfetiva().toString());
             } else{
                 pstmt.setNull(1,java.sql.Types.DATE);
             }
@@ -62,6 +81,7 @@ public class EmprestimoRepository {
         }
     }
 
+    @Override
     public Optional<Emprestimo> buscarEmprestimoPorId(Integer id) {
 
         if (id == null) return Optional.empty();

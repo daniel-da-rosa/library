@@ -5,7 +5,7 @@ import shokunin.group.com.biblioteca.domain.itens.LibraryItem;
 import shokunin.group.com.biblioteca.domain.users.Aluno;
 import shokunin.group.com.biblioteca.domain.users.Funcionario;
 import shokunin.group.com.biblioteca.domain.users.Usuario;
-import shokunin.group.com.biblioteca.repository.EmprestimoRepository;
+import shokunin.group.com.biblioteca.repository.contracts.IEmprestimoRepository;
 import shokunin.group.com.biblioteca.strategy.contracts.EmprestimoStrategy;
 import shokunin.group.com.biblioteca.exceptions.items.LibraryExceptionFactory;
 
@@ -16,11 +16,12 @@ import java.util.List;
 import java.util.Map;
 
 public class EmprestimoService {
-    private final Map<String,EmprestimoStrategy> estrategias = new HashMap<>();
-    private final EmprestimoRepository emprestimoRepository;
 
-    public EmprestimoService(List<EmprestimoStrategy> listaEstrategias,EmprestimoRepository emprestimoRepository) {
-        this.emprestimoRepository = emprestimoRepository;
+    private final Map<String,EmprestimoStrategy> estrategias = new HashMap<>();
+    private final IEmprestimoRepository repository;
+
+    public EmprestimoService(List<EmprestimoStrategy> listaEstrategias, IEmprestimoRepository repository) {
+        this.repository = repository;
         for (EmprestimoStrategy estrategia : listaEstrategias) {
             estrategias.put(estrategia.getTipoUsuario(), estrategia);
         }
@@ -53,7 +54,7 @@ public class EmprestimoService {
 
 
         //TODO: Verificar se o usuario ja possui o maximo de itens emprestados
-        emprestimoRepository.criarEmprestimo(novoEmprestimo);
+        repository.criarEmprestimo(novoEmprestimo);
 
         return novoEmprestimo;
 
